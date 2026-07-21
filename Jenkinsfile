@@ -37,6 +37,8 @@ pipeline {
                 '''
             }
         }
+        // create temporary staging container to have a running petclinic 
+        // instance to scan
         stage('Deploy to Staging') {
             steps {
                 sh '''
