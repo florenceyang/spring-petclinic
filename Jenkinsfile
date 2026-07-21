@@ -25,6 +25,18 @@ pipeline {
         }
 
         // ZAP Security Scan
+        // remove any pre-existing, create new zap container that's mounted
+        // to /zap/wrk (to be able to generate zap report)
+        stage('Start ZAP') {
+            steps {
+                sh '''
+                docker rm -f zap || true
+                docker run -d --name zap --network miniproject-network \
+                    -v $(pwd):/zap/wrk:rw --user root \
+                    zaproxy/zap-stable sleep infinity
+                '''
+            }
+        }
         stage('Deploy to Staging') {
             steps {
                 sh '''
@@ -40,7 +52,6 @@ pipeline {
                 sh '''
                 docker exec zap zap-baseline.py -t http://petclinic-staging:8080 \
                     -r zap_report.html -x zap_report.xml || true
-                docker cp zap:/zap/wrk/zap_report.html ./zap_report.html
                 '''
             }
             post {
