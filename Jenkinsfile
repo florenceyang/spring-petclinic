@@ -11,7 +11,8 @@ pipeline {
         stage('SonarQube Analysis') {
     steps {
         withSonarQubeEnv('SonarQube') {
-            sh 'mvn sonar:sonar'
+            // explicitly specify project key so it's correctly using project-specific token
+            sh 'mvn sonar:sonar -Dsonar.projectKey=spring-petclinic -Dsonar.projectName=spring-petclinic'
         }
     }
 }
