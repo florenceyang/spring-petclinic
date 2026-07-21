@@ -52,8 +52,12 @@ pipeline {
         stage('ZAP Scan') {
             steps {
                 sh '''
+                # 1. Run the scan inside the container
                 docker exec zap zap-baseline.py -t http://petclinic-staging:8080 \
                     -r zap_report.html -x zap_report.xml || true
+
+                # 2. Copy the generated report from the container into the Jenkins workspace
+                docker cp zap:/zap/zap_report.html ./zap_report.html
                 '''
             }
             post {
