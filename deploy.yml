@@ -7,6 +7,12 @@
         state: present
         update_cache: yes
 
+    - name: Ensure target directory exists
+      file:
+        path: /opt/petclinic
+        state: directory
+        mode: "0755"
+
     - name: Copy petclinic jar
       copy:
         src: "{{ lookup('fileglob', 'target/spring-petclinic-*.jar') }}"
