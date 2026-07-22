@@ -71,5 +71,14 @@ pipeline {
                 }
             }
         }
+
+        // Ansible (VM) production deployment
+        stage('Deploy to Production') {
+            steps {
+                withCredentials([sshUserPrivateKey(credentialsId: 'vm-deploy-key', keyFileVariable: 'SSH_KEY')]) {
+                    sh 'ansible-playbook -i inventory.ini deploy.yml --private-key=$SSH_KEY'
+                }
+            }
+        }
     }
 }

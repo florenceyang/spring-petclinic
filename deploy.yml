@@ -1,0 +1,36 @@
+- hosts: production
+  become: yes
+  tasks:
+    - name: Install Java
+      apt:
+        name: openjdk-17-jre
+        state: present
+        update_cache: yes
+
+    - name: Copy petclinic jar
+      copy:
+        src: target/spring-petclinic-*.jar
+        dest: /opt/petclinic/app.jar
+
+    - name: Create systemd service
+      copy:
+        dest: /etc/systemd/system/petclinic.service
+        content: |
+          [Unit]
+          Description=Spring Petclinic
+          After=network.target
+
+          [Service]
+          ExecStart=/usr/bin/java -jar /opt/petclinic/app.jar
+          Restart=always
+          User=root
+
+          [Install]
+          WantedBy=multi-user.target
+
+    - name: Reload systemd and restart service
+      systemd:
+        daemon_reload: yes
+        name: petclinic
+        enabled: yes
+        state: restarted
