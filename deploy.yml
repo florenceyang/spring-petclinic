@@ -9,7 +9,7 @@
 
     - name: Copy petclinic jar
       copy:
-        src: target/spring-petclinic-*.jar
+        src: "{{ lookup('fileglob', 'target/spring-petclinic-*.jar') }}"
         dest: /opt/petclinic/app.jar
 
     - name: Create systemd service
